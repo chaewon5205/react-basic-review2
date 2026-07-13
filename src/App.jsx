@@ -5,17 +5,17 @@ import reactData from "./data/data.json";
 
 import StudyInfo from "./components/StudyInfo";
 import StudyList from "./components/StudyList";
+import Filter from "./components/Filter";
+import Search from "./components/Search";
 
 function App() {
-  console.log(reactData);
-
   // 선택된 목록
   const [selectedId, setSelectedId] = useState(null);
 
   // 카테고리
   const [category, setCategory] = useState("all");
 
-  // 검색
+  // 검색어
   const [keyword, setKeyword] = useState("");
 
   // 카테고리 + 검색 동시 적용
@@ -41,23 +41,11 @@ function App() {
 
       <hr />
 
-      <h2>카테고리 필터</h2>
-
-      <div className="button-group">
-        <button onClick={() => setCategory("all")}>전체</button>
-
-        <button onClick={() => setCategory("concept")}>concept</button>
-
-        <button onClick={() => setCategory("library")}>library</button>
-
-        <button onClick={() => setCategory("hook")}>hook</button>
-      </div>
+      <Filter category={category} setCategory={setCategory} />
 
       <hr />
 
-      <h2>검색</h2>
-
-      <input type="text" placeholder="제목 검색" value={keyword} onChange={e => setKeyword(e.target.value)} />
+      <Search keyword={keyword} setKeyword={setKeyword} />
 
       <hr />
 
