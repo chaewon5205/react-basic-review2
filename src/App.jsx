@@ -35,19 +35,25 @@ function App() {
 
       <hr />
 
-      <h2>첫 번째 데이터 출력</h2>
+      <h2 className="section-title">첫 번째 데이터 출력</h2>
 
       <StudyInfo title={reactData[0].title} desc={reactData[0].desc} category={reactData[0].category} />
 
       <hr />
 
+      <h2 className="section-title">카테고리 필터</h2>
+
       <Filter category={category} setCategory={setCategory} />
 
       <hr />
 
+      <h2 className="section-title">검색</h2>
+
       <Search keyword={keyword} setKeyword={setKeyword} />
 
       <hr />
+
+      <h2 className="section-title">학습 목록</h2>
 
       <StudyList items={filteredData} selectedId={selectedId} onSelect={setSelectedId} />
     </div>

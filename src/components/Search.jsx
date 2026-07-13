@@ -1,8 +1,6 @@
 function Search({ keyword, setKeyword }) {
   return (
     <div>
-      <h2>검색</h2>
-
       <input
         className="search"
         type="text"
