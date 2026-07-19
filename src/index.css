@@ -10,10 +10,7 @@ body {
   color: #333;
 }
 
-button {
-  font-size: 15px;
-}
-
+button,
 input {
   font-size: 15px;
 }

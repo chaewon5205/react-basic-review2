@@ -1,61 +1,94 @@
-import { useState } from "react";
+import { useState, useMemo, useCallback, useRef, useEffect } from "react";
+
 import "./App.css";
 
 import reactData from "./data/data.json";
 
-import StudyInfo from "./components/StudyInfo";
+import SearchForm from "./components/SearchForm";
+import CategoryFilter from "./components/CategoryFilter";
+import StudySummary from "./components/StudySummary";
 import StudyList from "./components/StudyList";
-import Filter from "./components/Filter";
-import Search from "./components/Search";
 
 function App() {
-  // 선택된 목록
-  const [selectedId, setSelectedId] = useState(null);
+  // 검색어
+  const [keyword, setKeyword] = useState("");
 
   // 카테고리
   const [category, setCategory] = useState("all");
 
-  // 검색어
-  const [keyword, setKeyword] = useState("");
+  // 즐겨찾기
+  const [favoriteIds, setFavoriteIds] = useState([]);
 
-  // 카테고리 + 검색 동시 적용
-  const filteredData = reactData.filter(item => {
-    const categoryMatch = category === "all" || item.category === category;
+  // 즐겨찾기만 보기
+  const [favoriteOnly, setFavoriteOnly] = useState(false);
 
-    const keywordMatch = item.title.toLowerCase().includes(keyword.toLowerCase());
+  // 검색창
+  const searchInputRef = useRef(null);
 
-    return categoryMatch && keywordMatch;
-  });
+  // 렌더링 횟수
+  const renderCount = useRef(0);
+
+  renderCount.current += 1;
+
+  // 첫 화면에서 검색창 포커스
+  useEffect(() => {
+    searchInputRef.current.focus();
+  }, []);
+
+  // 검색창으로 이동
+  const handleFocusSearch = () => {
+    searchInputRef.current.focus();
+  };
+
+  // 즐겨찾기 토글
+  const handleToggleFavorite = useCallback(id => {
+    setFavoriteIds(prev => (prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]));
+  }, []);
+
+  // 필터링
+  const filteredData = useMemo(() => {
+    return reactData.filter(item => {
+      const keywordMatch = item.title.toLowerCase().includes(keyword.toLowerCase());
+
+      const categoryMatch = category === "all" || item.category === category;
+
+      const favoriteMatch = !favoriteOnly || favoriteIds.includes(item.id);
+
+      return keywordMatch && categoryMatch && favoriteMatch;
+    });
+  }, [keyword, category, favoriteOnly, favoriteIds]);
+
+  // 통계
+  const summary = useMemo(() => {
+    return {
+      total: reactData.length,
+      visible: filteredData.length,
+      favorite: favoriteIds.length,
+    };
+  }, [filteredData, favoriteIds]);
 
   return (
     <div className="App">
-      <h1>React Basic Review Mission 2</h1>
+      <h1>React Basic Review Mission 8</h1>
 
-      <p className="count">전체 학습 항목 수 : {reactData.length}개</p>
+      <h2>React Hooks 학습 목록 관리</h2>
 
-      <hr />
+      <SearchForm
+        keyword={keyword}
+        setKeyword={setKeyword}
+        searchInputRef={searchInputRef}
+        onFocus={handleFocusSearch}
+      />
 
-      <h2 className="section-title">첫 번째 데이터 출력</h2>
+      <CategoryFilter category={category} setCategory={setCategory} />
 
-      <StudyInfo title={reactData[0].title} desc={reactData[0].desc} category={reactData[0].category} />
+      <button className="favorite-only" onClick={() => setFavoriteOnly(!favoriteOnly)}>
+        {favoriteOnly ? "전체 항목 보기" : "즐겨찾기만 보기"}
+      </button>
 
-      <hr />
+      <StudySummary summary={summary} renderCount={renderCount.current} />
 
-      <h2 className="section-title">카테고리 필터</h2>
-
-      <Filter category={category} setCategory={setCategory} />
-
-      <hr />
-
-      <h2 className="section-title">검색</h2>
-
-      <Search keyword={keyword} setKeyword={setKeyword} />
-
-      <hr />
-
-      <h2 className="section-title">학습 목록</h2>
-
-      <StudyList items={filteredData} selectedId={selectedId} onSelect={setSelectedId} />
+      <StudyList items={filteredData} favoriteIds={favoriteIds} onToggleFavorite={handleToggleFavorite} />
     </div>
   );
 }
