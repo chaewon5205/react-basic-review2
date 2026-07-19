@@ -6,7 +6,7 @@ function StudyList({ items, favoriteIds, onToggleFavorite }) {
   }
 
   return (
-    <div>
+    <div className="study-list">
       {items.map(item => (
         <StudyItem
           key={item.id}

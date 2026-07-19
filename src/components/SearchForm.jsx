@@ -13,6 +13,10 @@ function SearchForm({ keyword, setKeyword, searchInputRef, onFocus }) {
       <button className="search-btn" onClick={onFocus}>
         검색창으로 이동
       </button>
+
+      <button className="reset-btn" onClick={() => setKeyword("")}>
+        초기화
+      </button>
     </div>
   );
 }
